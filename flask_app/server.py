@@ -29,7 +29,7 @@ def getResponse(input_text, restrictions, allergens, budget, goals, cuisines):
         allergens_str = allergens[0]  # Only one restriction
 
     # Form the final sentence
-    allergens_string = f". I have the following allergens: {allergens_str}"
+    allergens_string = f". I am allergic to: {allergens_str}"
 
     budget_string = f". I have the following budget: {budget}"
     if budget == "":
@@ -38,7 +38,7 @@ def getResponse(input_text, restrictions, allergens, budget, goals, cuisines):
     if len(goals) > 1:
         goals_str = ", ".join(goals[:-1]) + " and " + goals[-1]
     else:
-        goals_str = allergens[0]  # Only one restriction
+        goals_str = goals[0]  # Only one restriction
 
     goals_string = f". I have the following goals: {goals_str}"
 
@@ -55,7 +55,10 @@ def getResponse(input_text, restrictions, allergens, budget, goals, cuisines):
     body = {	
     "input": """You'\''ll act as a dietitian who'\''s current with the latest data research. Always keep in mind dietary preferences, restrictions and health conditions. Respond only to queries about food, recipes, or nutrition. 
     For any other topics, reply with '\''I cannot assist you with that.'\'' Before finalizing any response, confirm that the query is entirely related to food, recipes, or nutrition and ensure that all dietary restrictions are thoroughly thought of in the response. If any part of it is not, use the fallback response: '\''I cannot assist you with that.'\''. After creating a response, ensure that it is formatted clearly for readability and free of grammatical errors.
-
+    
+    Input: Hello
+    Output: Hello! I'm here to help you with your food-related questions. If you have any questions about recipes, ingredients, or nutrition, feel free to ask. If I cannot assist you with your query, I will let you know.
+    
     Input: Create a step-by-step recipe for a delicious and healthy breakfast smoothie. Include a list of ingredients, measurements, and detailed instructions:
     Output: **Strawberry & Banana Green Smoothie**
 
