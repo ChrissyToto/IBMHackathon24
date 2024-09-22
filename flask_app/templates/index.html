@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Chatbot</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../static/styles.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header text-center bg-primary text-white">
+                    <h2>Personalised Recipe Chatbot</h2>
+                </div>
+                <div class="card-body">
+                    <div class="chat-container" id="chatContainer"></div>
+                    <div class="message-input mt-3">
+                        <input type="text" class="form-control" id="userInput" placeholder="Type a message..." />
+                        <button class="btn btn-primary" id="sendBtn">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sidebar for Dietary Restrictions and Allergens -->
+<div class="sidebar" id="sidebar">
+    <div class="p-3">
+        <h2>Dietary Restrictions</h4>
+        <button class="btn btn-outline-primary restriction-btn" id="vegetarianBtn" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleRestriction('Vegetarian', 'vegetarianBtn')">Vegetarian</button>
+        <button class="btn btn-outline-primary restriction-btn" id="veganBtn" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleRestriction('Vegan', 'veganBtn')">Vegan</button>
+        <button class="btn btn-outline-primary restriction-btn" id="paleoBtn" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleRestriction('Paleo', 'paleoBtn')">Paleo</button>
+        <button class="btn btn-outline-primary restriction-btn" id="ketoBtn" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleRestriction('Keto', 'ketoBtn')">Keto</button>
+
+        <label for="budgetSelect">Budget:</label>
+        <select id="budgetSelect" onchange="updateBudgetValue()">
+            <option value="None">None</option>
+            <option value="5">£5</option>
+            <option value="10">£10</option>
+            <option value="20">£20</option>
+            <option value="30">£30</option>
+            <option value="40">£40</option>
+            <option value="50">£50</option>
+            <option value="75">£75</option>
+            <option value="100">£100</option>
+        </select>
+
+        <h2 class="mt-4 allergen-header" data-toggle="collapse" data-target="#allergenCollapse" aria-expanded="false" aria-controls="allergenCollapse">
+            Allergens <span>&#9660;</span>
+        </h2>
+        <div class="collapse" id="allergenCollapse">
+            <button class="btn btn-outline-danger allergen-btn" id="peanutsBtn" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleAllergen('Peanuts', 'peanutsBtn')">Peanuts</button>
+            <button class="btn btn-outline-danger allergen-btn" id="shellfishBtn" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleAllergen('Shellfish', 'shellfishBtn')">Shellfish</button>
+            <button class="btn btn-outline-danger allergen-btn" id="eggsBtn" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleAllergen('Eggs', 'eggsBtn')">Eggs</button>
+            <button class="btn btn-outline-danger allergen-btn" id="milkBtn" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleAllergen('Milk', 'milkBtn')">Milk</button>
+            <button class="btn btn-outline-danger allergen-btn" id="soyBtn" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleAllergen('Soy', 'soyBtn')">Soy</button>
+            <button class="btn btn-outline-danger allergen-btn" id="treeNutsBtn" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleAllergen('Tree Nuts', 'treeNutsBtn')">Tree Nuts</button>
+            <button class="btn btn-outline-danger allergen-btn" id="wheatBtn" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleAllergen('Wheat', 'wheatBtn')">Wheat</button>
+            <button class="btn btn-outline-danger allergen-btn" id="fishBtn" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleAllergen('Fish', 'fishBtn')">Fish</button>
+        </div>
+
+        <h2 class="mt-4">Goals:</h2>
+        <div>
+            <button class="btn btn-outline-success" id="weightLossBtn" onclick="toggleGoal('Weight Loss', 'weightLossBtn')">Weight Loss</button>
+            <button class="btn btn-outline-success" id="muscleGainBtn" onclick="toggleGoal('Muscle Gain', 'muscleGainBtn')">Muscle Gain</button>
+            <button class="btn btn-outline-success" id="healthyEatingBtn" onclick="toggleGoal('Healthy Eating', 'healthyEatingBtn')">Healthy Eating</button>
+        </div>
+
+        <h2 class="mt-4">Cuisines:</h2>
+        <div>
+            <button class="btn btn-outline-info" id="mediterraneanBtn" onclick="toggleCuisine('Mediterranean', 'mediterraneanBtn')">Mediterranean</button>
+            <button class="btn btn-outline-info" id="asianBtn" onclick="toggleCuisine('Asian', 'asianBtn')">Asian</button>
+            <button class="btn btn-outline-info" id="mexicanBtn" onclick="toggleCuisine('Mexican', 'mexicanBtn')">Mexican</button>
+            <button class="btn btn-outline-info" id="indianBtn" onclick="toggleCuisine('Indian', 'indianBtn')">Indian</button>
+            <button class="btn btn-outline-info" id="frenchBtn" onclick="toggleCuisine('French', 'frenchBtn')">French</button>
+            <button class="btn btn-outline-info" id="bedouinBtn" onclick="toggleCuisine('Bedouin', 'bedouinBtn')">Bedouin</button>
+        </div>
+    </div>
+</div>
+
+
+<button class="btn btn-primary toggle-sidebar" onclick="toggleSidebar()">Filters</button>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script>
+    let selectedRestrictions = [];
+    let selectedAllergens = [];
+    let selectedGoals = [];
+    let selectedCuisines = [];
+
+    // Function to toggle the sidebar
+    function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    const toggleButton = document.querySelector(".toggle-sidebar");
+    
+    sidebar.classList.toggle("open");
+
+    // Change the button's content to "X" when the sidebar is open
+    if (sidebar.classList.contains("open")) {
+        toggleButton.innerHTML = "&#10005;";  // HTML code for "X" symbol
+    } else {
+        toggleButton.innerHTML = "Filters";  // Default text when closed
+    }
+}
+
+
+    // Function to handle adding dietary restriction
+    function toggleRestriction(restriction, btnId) {
+        const button = document.getElementById(btnId);
+
+        // Toggle the restriction in the selectedRestrictions array
+        if (selectedRestrictions.includes(restriction)) {
+            selectedRestrictions = selectedRestrictions.filter(item => item !== restriction);
+        } else {
+            selectedRestrictions.push(restriction);
+        }
+
+        console.log("Selected Restrictions:", selectedRestrictions);
+    }
+
+    // Function to handle adding allergens
+    function toggleAllergen(allergen, btnId) {
+        const button = document.getElementById(btnId);
+
+        // Toggle the allergen in the selectedAllergens array
+        if (selectedAllergens.includes(allergen)) {
+            selectedAllergens = selectedAllergens.filter(item => item !== allergen);
+        } else {
+            selectedAllergens.push(allergen);
+        }
+
+        console.log("Selected Allergens:", selectedAllergens);
+    }
+
+    // Handle sending the input with restrictions and allergens
+    document.getElementById("sendBtn").onclick = function() {
+        var inputField = document.getElementById("userInput");
+        var userInput = inputField.value;
+        var budgetSelect = document.getElementById("budgetSelect");
+        var selectedBudget = budgetSelect.value;
+        if (userInput) {
+            addMessage(userInput, 'user');
+            inputField.value = '';
+            
+            // Disable the send button to prevent multiple submissions
+            const sendBtn = document.getElementById("sendBtn");
+            sendBtn.disabled = true;
+
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    input: userInput,
+                    restrictions: selectedRestrictions,  // Send dietary restrictions
+                    allergens: selectedAllergens,
+                    budget: selectedBudget,
+                    goals: selectedGoals,
+                    cuisines: selectedCuisines
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.response) {
+                    addMessage(data.response, 'bot');  // Display the bot's response
+                } else if (data.error) {
+                    addMessage(data.error, 'bot');    // Handle any errors
+                }
+            })
+            .catch(error => {
+                addMessage("Error: " + error.message, 'bot');  // Handle fetch errors
+            })
+            .finally(() => {
+                selectedRestrictions = [];
+                selectedAllergens = [];
+                selectedBudget = "None";  // Reset budget to default "None"
+                selectedGoals = [];
+                selectedCuisines = [];
+
+                // Re-enable the send button
+                sendBtn.disabled = false;
+
+                // Reset the button states visually
+                document.querySelectorAll('.restriction-btn, .allergen-btn, .btn-outline-success, .btn-outline-info').forEach(button => {
+                    button.classList.remove('active');  // Clear 'active' class for all toggle buttons
+                    button.setAttribute('aria-pressed', 'false');  // Reset aria-pressed state
+                });
+
+                // Reset the budget select dropdown to "None"
+                const budgetSelect = document.getElementById('budgetSelect');
+                budgetSelect.value = "None";
+
+                console.log("Form reset complete.");
+            });
+        }
+    };
+
+    // Function to add messages to the chat UI
+    function addMessage(message, sender) {
+        var chatContainer = document.getElementById("chatContainer");
+        var messageDiv = document.createElement("div");
+        messageDiv.classList.add("message", sender === 'user' ? "user-message" : "bot-message");
+        messageDiv.innerText = message;
+        chatContainer.appendChild(messageDiv);
+        chatContainer.scrollTop = chatContainer.scrollHeight;  // Auto-scroll to the latest message
+    }
+
+    // Function to handle toggling goals
+    function toggleGoal(goal, btnId) {
+        const button = document.getElementById(btnId);
+        if (selectedGoals.includes(goal)) {
+            selectedGoals = selectedGoals.filter(item => item !== goal);
+            button.classList.remove('active');
+        } else {
+            selectedGoals.push(goal);
+            button.classList.add('active');
+        }
+        console.log("Selected Goals:", selectedGoals);
+    }
+
+    // Function to handle toggling cuisines
+    function toggleCuisine(cuisine, btnId) {
+        const button = document.getElementById(btnId);
+        if (selectedCuisines.includes(cuisine)) {
+            selectedCuisines = selectedCuisines.filter(item => item !== cuisine);
+            button.classList.remove('active');
+        } else {
+            selectedCuisines.push(cuisine);
+            button.classList.add('active');
+        }
+        console.log("Selected Cuisines:", selectedCuisines);
+    }
+
+</script>
+
+</body>
+</html>
